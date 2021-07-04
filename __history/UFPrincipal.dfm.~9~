@@ -2,7 +2,7 @@ object frmPrincipal: TfrmPrincipal
   Left = 0
   Top = 0
   Caption = 'CADENA'
-  ClientHeight = 508
+  ClientHeight = 439
   ClientWidth = 851
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,11 +19,9 @@ object frmPrincipal: TfrmPrincipal
     Left = 0
     Top = 0
     Width = 851
-    Height = 508
+    Height = 439
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 56
-    ExplicitTop = 304
     object Label1: TLabel
       Left = 40
       Top = 24
@@ -97,17 +95,16 @@ object frmPrincipal: TfrmPrincipal
       TabOrder = 2
     end
     object Button1: TButton
-      Left = 40
-      Top = 241
+      Left = 304
+      Top = 104
       Width = 75
       Height = 25
-      Caption = 'cargar'
+      Caption = 'Button1'
       TabOrder = 3
-      OnClick = Button1Click
     end
     object StringGrid1: TStringGrid
-      Left = 40
-      Top = 272
+      Left = 48
+      Top = 216
       Width = 777
       Height = 65
       ColCount = 10
@@ -125,26 +122,17 @@ object frmPrincipal: TfrmPrincipal
       ParentFont = False
       TabOrder = 4
     end
-    object Button2: TButton
-      Left = 144
-      Top = 241
-      Width = 75
-      Height = 25
-      Caption = 'descargar'
-      TabOrder = 5
-      OnClick = Button2Click
-    end
   end
   object MainMenu1: TMainMenu
     object Metodos1: TMenuItem
       Caption = 'Metodos'
-      object CargarCadena: TMenuItem
-        Caption = 'Insertar Palabra'
-        OnClick = CargarCadenaClick
-      end
       object Mostrar: TMenuItem
-        Caption = 'Eliminar Palabra'
+        Caption = 'Mostrar Cadena'
         OnClick = MostrarClick
+      end
+      object CargarCadena: TMenuItem
+        Caption = 'Cargar Cadena'
+        OnClick = CargarCadenaClick
       end
       object longitud: TMenuItem
         Caption = 'Longitud de Cadena'
@@ -200,17 +188,6 @@ object frmPrincipal: TfrmPrincipal
       object whileposlongitudandcaracteresposinseparadoresdobeginsaltelosseparadores1: TMenuItem
         Caption = 'return PosPalabra'
         OnClick = whileposlongitudandcaracteresposinseparadoresdobeginsaltelosseparadores1Click
-      end
-    end
-    object examen1: TMenuItem
-      Caption = 'examen'
-      object polinomioWord1: TMenuItem
-        Caption = 'polinomio:Word'
-        OnClick = polinomioWord1Click
-      end
-      object fechaMenor1: TMenuItem
-        Caption = 'fechaMenor'
-        OnClick = fechaMenor1Click
       end
     end
   end

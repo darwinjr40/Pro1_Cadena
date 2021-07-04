@@ -143,8 +143,7 @@ object frmPrincipal: TfrmPrincipal
         OnClick = CargarCadenaClick
       end
       object Mostrar: TMenuItem
-        Caption = 'Eliminar Palabra'
-        OnClick = MostrarClick
+        Caption = 'Mostrar Cadena'
       end
       object longitud: TMenuItem
         Caption = 'Longitud de Cadena'
@@ -207,10 +206,6 @@ object frmPrincipal: TfrmPrincipal
       object polinomioWord1: TMenuItem
         Caption = 'polinomio:Word'
         OnClick = polinomioWord1Click
-      end
-      object fechaMenor1: TMenuItem
-        Caption = 'fechaMenor'
-        OnClick = fechaMenor1Click
       end
     end
   end

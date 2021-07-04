@@ -1,7 +1,7 @@
 unit UCCadena;
 
 interface
- uses sysutils;
+ uses sysutils,Vcl.Dialogs, math;
  Const MaxC = 1024;
        separadores= [' ',',','.',';',':'];
        letras = ['A'..'Z','a'..'z'];
@@ -14,9 +14,18 @@ interface
         //valor
      public
 //-------------------------------------------------------------
-       function LongCadena(c:string):word;
+       procedure setLongitud(x : Word);
        procedure AdicionarCaracter (c:char);
+       procedure adicionarPalabra(x : String);
        procedure InsertarCaracter (p:byte;c:char);
+
+       function BuscarPalabra(pal:string):word;
+       function sacarPalabra(var pos:byte): String;
+       procedure eliminarPalabra(pal:string);
+
+       function fechaMenor():string;
+       function intFecha(x:string):Cardinal;
+
        Procedure EliminarCaracter (p:byte);
    //    Procedure EliminarCaracter2 (c:char);
        procedure ModificarCaracter(p:byte;c:char);
@@ -24,6 +33,9 @@ interface
 //--------------------------------------------------------------
        procedure ModificarString(s: string);
        function ToStr : string;
+       function getLongitud():Word;
+       function getCaracter(pos : byte) : char;
+       function LongCadena(c:string):word;
 //--------------------------------------------------------------
 
 //--------------------------------------------------------------
@@ -33,11 +45,17 @@ interface
        procedure UpperCase;
        Procedure LowerCase;
        Function CantidadPalabras:byte;
-       function BuscarPalabra(pal:string):word;
-       procedure sacarPalabra(var pos:Integer; var palabra :String );
+
+
+       function  sacarNumero(var pos:byte):integer;
+       function  sacarOperador(var pos:byte):char;
+       function polinomio(x: Byte):Integer;
+
+       procedure mostrarNumeros();
+       function polinomioN(x: Byte):Integer;
       { Procedure PalabraN;
        procedure EliminarPalabra (p:byte); no es muy práctico usar este }
-       procedure EliminarPalabra2 (c:string);
+       procedure EliminarPalabra2(c:string);
    end;
 implementation
 
@@ -79,6 +97,16 @@ begin
 
 end;
 
+procedure Cadena.eliminarPalabra(pal: string);
+var i, pos :Byte;
+begin
+  pos := BuscarPalabra(pal);
+  if pos > 0 then begin
+    for I := 1 to Length(pal) do
+      EliminarCaracter(pos);
+  end;
+end;
+
 procedure Cadena.ModificarCaracter(p: byte; c: char);
 begin
 if (p>0) and (p<=longitud) then  begin
@@ -93,14 +121,85 @@ if (p>0) and (p<=longitud) then
   result:= caracteres[p];
   raise Exception.Create('Posición fuera de rango');
 end;
+
+function Cadena.polinomio(x: Byte): Integer;
+var i : Byte;
+    n, r:Integer;
+    op :Char;
+begin
+  i := 1;
+  r := 0;
+  n := 0;
+  while i<= longitud do begin
+    op := sacarOperador(i);
+    case op of
+      '-':n := -sacarNumero(i);
+      '+':n := +sacarNumero(i);
+    end;
+    r := r + n * x;
+  end;
+  result := r;
+end;
+
+function Cadena.polinomioN(x: Byte): Integer;
+var i:Byte;
+    resultado, aux : Word;
+begin
+  while i <= longitud do begin
+    aux := sacarNumero(i);
+    if i<= longitud then begin
+      if caracteres[i] = 'x' then begin
+        resultado := resultado + aux + pow;
+      end else begin
+        resultado := resultado + aux;
+      end;
+    end;
+  end;
+
+end;
+
 //----------------------------------------------
 //caracteres[ ,h,o,l,a, ,c,o,m,o]   pos =1   palabra=""
 //pos = 7     palabra = "hola"
 //sacarPalabra(var i,var  pal);  //i = 1;    pal=""
 //i= 7     pal ="hola"
 
-procedure Cadena.sacarPalabra(var pos: Integer; var palabra: String);
+function Cadena.sacarNumero(var pos:byte): integer;
+const  NUMEROS = ['0'..'9'];
+VAR num : Integer;
+    x :string;
+begin
+ x := '0';
+ num := 0;
+  while (pos <=longitud) and (not(caracteres[pos] in NUMEROS))  do   begin //salte los separadores
+    Inc(pos);   //pos = pos + 1
+  end;
+  while (pos <=longitud) and (caracteres[pos] in NUMEROS)  do   begin //salte los separadores
+    x := x + caracteres[pos];
+    Inc(pos);
+  end;
+  result := StrToInt(x);
+end;
+
+function Cadena.sacarOperador(var pos: byte): char;
+const  OPERADOR = ['-','+'];
+VAR
+    x :char;
+begin
+ x := '+';
+  while (pos <=longitud) and (not(caracteres[pos] in OPERADOR))  do   begin //salte los separadores
+    Inc(pos);   //pos = pos + 1
+  end;
+  while (pos <=longitud) and (caracteres[pos] in OPERADOR)  do   begin //salte los separadores
+    x := caracteres[pos];
+    Inc(pos);
+  end;
+  result := x;
+end;
+
+function Cadena.sacarPalabra(var pos: byte): String;
 var i : Byte;
+    palabra : string;
 begin
   palabra := '';   // ' '   in   separadores[' ', ',', '.']
   while (pos <=longitud) and (caracteres[pos] in separadores)  do   begin //salte los separadores
@@ -111,6 +210,12 @@ begin
     palabra := palabra + caracteres[pos];//palabra ="" --> palabra="hola"
     Inc(pos);   //pos = pos + 1
   end;
+  result:= palabra;
+end;
+
+procedure Cadena.setLongitud(x: Word);
+begin
+  longitud := x;
 end;
 
 //----------------------------------------------
@@ -121,6 +226,18 @@ begin
    longitud := length(s);
    for I := 1 to longitud do
        caracteres[i]:= s [i];
+end;
+
+procedure Cadena.mostrarNumeros;
+var i : Byte;
+    n:Integer;
+begin
+  i := 1;
+  while i<= longitud do begin
+    n := sacarNumero(i);
+    ShowMessage(IntToStr(n));
+
+  end;
 end;
 
 function Cadena.ToStr: string;
@@ -165,6 +282,25 @@ begin
   aux:=caracteres[a];
   caracteres[a]:=caracteres[b];
   caracteres[b]:=aux;
+end;
+
+                        //'10-01-2009' : 20090110
+function Cadena.intFecha(x: string): Cardinal;
+const numero=[0..9];
+var n,i: Byte;
+      r, resultado:string;
+begin
+  n := Length(x);
+  resultado := '';
+  for I := 1 to n do begin
+    if x[i]<>'-' then begin
+      r := r +x[i]   //r =10
+    end else begin
+      resultado := r + resultado;
+      r:=''
+    end;
+  end;
+  result := StrToInt(r+resultado);
 end;
 
 procedure Cadena.UpperCase;
@@ -233,23 +369,30 @@ while i<=longitud do
 result:=contador;
 end;
 
+procedure Cadena.adicionarPalabra(x: String);
+var i,l : Word;
+begin
+  for I := 1 to Length(x) do
+    AdicionarCaracter(x[i]);
+end;
+
 Function Cadena.BuscarPalabra(pal: string): word;
 var i: Byte;
-    res:Word;
+    pos:Word;
     palabra : string;
 begin
   i := 1;
   palabra := '';
-  res := 0;
+  pos := 0;
   while(i <= longitud)do begin
-    sacarPalabra(i, palabra); //i=1; palabra=''
+    palabra := sacarPalabra(i); //i=1; palabra=''
                               //i = 8    palabra = 'hola';
     if palabra = pal then   begin
-       res := i - Length(palabra);
-       Break();    //i = longitud
+       pos := i - Length(palabra);
+       i := longitud + 1;
     end;
   end;
-  result := res;
+  result := pos;
 end;
 
 procedure Cadena.EliminarPalabra2(c: string);
@@ -257,4 +400,34 @@ begin
    //hola
 end;
 
+function Cadena.fechaMenor: string;
+var i:Byte;
+    fecha, fecha2:string;
+begin
+  fecha := sacarPalabra(i);//'10-01-2009'
+  //ShowMessage(IntToStr(intFecha(fecha)));
+  while i <= longitud do begin
+    fecha2 := sacarPalabra(i);//'05-12-2017'
+    //ShowMessage(IntToStr(intFecha(fecha2)));
+    //   20171205       <     20090110
+    if (intFecha(fecha2) < intFecha(fecha)) then
+      fecha := fecha2;
+  end;
+  result:= fecha;
+end;
+
+function Cadena.getCaracter(pos: byte): char;
+begin
+  if (pos > 0) and (pos <= longitud) then  //validar posicion
+    result := caracteres[pos];
+
+end;
+
+function Cadena.getLongitud: Word;
+begin
+ Result := longitud;
+end;
+
+//"2x + 3x - 6x"... x = 3
+// "2*3 + 3*3 - 6*3"
 end.
